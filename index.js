@@ -1,10 +1,7 @@
 const express = require('express');
 const app = express();
-// app.use((req, res)=>{
-//     console.log('we got request');
-//     res.status(200).send({'some': 'json'});
-// });
 
+// root route
 app.get('/', (req, res) => {
     res.status(200)
     .send({
@@ -12,28 +9,14 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/search', (req, res) => {
-    const { q } = req.query;
-    if (!q) {
-        res.status(404)
-        .send({
-            'message' : `Nothing to search`
-        });
-    }
-    res.status(200)
-    .send({
-        'message' : `Query Serach: ${q}`
-    });
-});
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
-app.get('/user/:name', (req, res) => {
-    const { name } = req.params;
-    res.status(200)
-    .send({
-        'message' : `User name = ${name}`
-    });
-});
+app.use('/users', require('./routes/users'));
+app.use('/auth', require('./routes/auth'));
+app.use('/search', require('./routes/search'));
 
+// not found route
 app.get('*', (req, res) => {
     res.status(404)
     .send({
